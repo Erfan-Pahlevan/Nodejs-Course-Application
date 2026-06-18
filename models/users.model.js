@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: false },
   age: { type: Number, required: false },
   mobile: { type: String, required: false },
-  password: { type: String, required: true }, // better to leave password select to false
+  password: { type: String, required: true, select: false }, // better to leave password select to false
   role: { type: String, default: "user" },
 });
 

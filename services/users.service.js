@@ -12,8 +12,12 @@ async function createToken(findUser, JWTSECRET) {
   );
 }
 
+const verifyToken = async (token, JWTSECRET) => {
+  return jwt.verify(token, JWTSECRET);
+};
+
 const findUsername = async (username) => {
-  return userModel.findOne({ username });
+  return userModel.findOne({ username }).select("+password");
 };
 
 const findUserById = async (userId) => {
@@ -65,6 +69,7 @@ const deleteUser = async (id) => {
 
 module.exports = {
   createToken,
+  verifyToken,
   findUsername,
   findUserById,
   isValidPassword,

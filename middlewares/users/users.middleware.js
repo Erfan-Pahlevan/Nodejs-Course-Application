@@ -1,6 +1,6 @@
 // require("dotenv").config();
 
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
 
 const userService = require("../../services/users.service");
 const postService = require("../../services/posts.service");
@@ -22,7 +22,7 @@ const checkAuthHeader = (req, res, next) => {
 };
 
 // Local middleware
-const auth = (req, res, next) => {
+ const auth = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -40,7 +40,7 @@ const auth = (req, res, next) => {
   }
 
   try {
-    const payload = jwt.verify(token, process.env.JWTSECRET);
+    const payload = await userService.verifyToken(token, process.env.JWTSECRET);
     req.userId = payload.userId;
 
     console.log("userId in auth:", req.userId);
