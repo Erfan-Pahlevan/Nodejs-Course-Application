@@ -6,6 +6,12 @@ const {
   auth,
 } = require("../middlewares/users/users.middleware");
 
+
+const {
+  validateRegister,
+  validateLogin,
+} = require("../middlewares/users/users.validation.middleware");
+
 const {
   register,
   login,
@@ -27,8 +33,8 @@ router.get("/", (req, res) => {
   res.send("<h1>users</h1>");
 });
 
-router.post("/register", register);
-router.post("/login", login);
+router.post("/register",validateRegister, register);
+router.post("/login",validateLogin, login);
 
 router.get("/get-all", getAll);
 router.get("/get-detail/:id", getDetail);

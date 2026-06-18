@@ -1,13 +1,22 @@
-require("dotenv").config();
+// require("dotenv").config();
 
-const userModel = require("../../models/users.model");
+// const userModel = require("../../models/users.model");
 const userService = require("../../services/users.service");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+// const bcrypt = require("bcrypt");
+// const jwt = require("jsonwebtoken");
 
 async function register(req, res) {
   try {
     const { username, password, role } = req.body;
+    const findUser = await userService.findUsername(username);
+
+    if (findUser) {
+      return res.status(400).json({
+        status: 400,
+        message: "username already exists",
+      });
+    }
+
     const user = await userService.registerUser(username, password, role);
 
     res.status(201).json({
@@ -24,11 +33,12 @@ async function register(req, res) {
 async function login(req, res) {
   const { username, password } = req.body;
 
-  if (!username || !password) {
-    return res.status(400).json({
-      message: "Invalid credentials",
-    });
-  }
+  // validate in validation middleware
+  // if (!username || !password) {
+  //   return res.status(400).json({
+  //     message: "Invalid credentials",
+  //   });
+  // }
 
   const findUser = await userService.findUsername(username);
   if (!findUser) {
@@ -44,7 +54,7 @@ async function login(req, res) {
     });
   }
 
-  const token = jwt.sign({ userId: findUser._id }, process.env.JWTSECRET);
+  const token = await userService.createToken(findUser, process.env.JWTSECRET);
 
   return res.json({
     token,
@@ -54,7 +64,13 @@ async function login(req, res) {
 async function profile(req, res) {
   const { userId } = req;
 
-  const findUser = await userModel.findById(userId);
+  const findUser = await userService.findUserById(userId);
+
+  if (!findUser) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
 
   res.status(200).json({
     user: findUser,
@@ -155,22 +171,29 @@ async function getAll(req, res) {
     }
 
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10 ;
-    const {role , search , sort}  = req.query
-    const filter = {}
-    if(role){
-      filter.role = role
-    }
+    const limit = Number(req.query.limit) || 10;
+    const { role, search, sort } = req.query;
 
-    if(search){
-      filter.username = {
-        $regex: search, 
-        $options: "i"
-      }
-    }
+    // const filter = {};
+    // if (role) {
+    //   filter.role = role;
+    // }
 
-    // const findUsers = await userModel.paginate(filter , {page , limit});
-    const findUsers = await userModel.find(filter).sort(sort);
+    // if (search) {
+    //   filter.username = {
+    //     $regex: search,
+    //     $options: "i",
+    //   };
+    // }
+    // const findUsers = await userModel.find(filter).sort(sort);
+
+    const findUsers = await userService.findAllUsers({
+      page,
+      limit,
+      role,
+      search,
+      sort,
+    });
     if (!findUsers) {
       return res.status(200).json({
         message: "No users in the database",
@@ -197,7 +220,7 @@ async function getDetail(req, res) {
       });
     }
     const { id } = req.params;
-    const findUser = await userModel.findById(id);
+    const findUser = await userService.findUserById(id);
 
     if (!findUser) {
       return res.status(404).json({
@@ -226,9 +249,9 @@ async function update(req, res) {
       });
     }
     const { id, age } = req.body;
-    const findUser = await userModel.findById(id);
+    const findUser = await userService.findUserById(id);
     if (!findUser) {
-      res.status(404).json({
+      return res.status(404).json({
         message: "User not found",
       });
     }
@@ -254,7 +277,7 @@ async function deleteOne(req, res) {
       });
     }
     const { id } = req.body;
-    const deletedUser = await userModel.findByIdAndDelete(id);
+    const deletedUser = await userService.deleteUser(id);
     if (!deletedUser) {
       return res.status(404).json({ message: "User not found." });
     }
