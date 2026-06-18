@@ -27,4 +27,26 @@ const findPost = async (data) => {
   ]);
 };
 
-module.exports = { create, deletePost, findPost };
+const findAllPosts = async ({ page, limit, search, sort }) => {
+  const filter = {};
+
+  if (search) {
+    filter.title = {
+      $regex: search,
+      $options: "i",
+    };
+  }
+
+  const options = {
+    page,
+    limit,
+    sort: sort || undefined,
+    populate: {
+      path: "user",
+    },
+  };
+
+  return postModel.paginate(filter, options);
+};
+
+module.exports = { create, deletePost, findPost, findAllPosts };

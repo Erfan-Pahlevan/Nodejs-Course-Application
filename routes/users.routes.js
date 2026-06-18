@@ -2,10 +2,12 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../config/multer.config");
 
+const { auth } = require("../middlewares/users/users.middleware");
+
 const {
-  checkAuthHeader,
-  auth,
-} = require("../middlewares/users/users.middleware");
+  validateRegister,
+  validateLogin,
+} = require("../middlewares/users/users.validation.middleware");
 
 const {
   register,
@@ -28,8 +30,8 @@ router.get("/", (req, res) => {
   res.send("<h1>users</h1>");
 });
 
-router.post("/register", register);
-router.post("/login", login);
+router.post("/register", validateRegister, register);
+router.post("/login", validateLogin, login);
 
 router.get("/get-all", getAll);
 router.get("/get-detail/:id", getDetail);
@@ -43,7 +45,6 @@ router.get("/user/:id", getUserById);
 router.get("/dashboard", auth);
 router.get("/profile", auth, profile);
 router.get("/admin", auth);
-router.post("/dashboard", checkAuthHeader);
 
 // Method using local middleware auth:
 

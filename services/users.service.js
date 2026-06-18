@@ -1,9 +1,23 @@
 const userModel = require("../models/users.model");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { findPost } = require("./posts.service");
 
+async function createToken(findUser, JWTSECRET) {
+  return jwt.sign(
+    {
+      userId: findUser._id,
+    },
+    JWTSECRET,
+  );
+}
+
+const verifyToken = async (token, JWTSECRET) => {
+  return jwt.verify(token, JWTSECRET);
+};
+
 const findUsername = async (username) => {
-  return userModel.findOne({ username });
+  return userModel.findOne({ username }).select("+password");
 };
 
 const findUserById = async (userId) => {
@@ -34,10 +48,40 @@ const registerUser = async (username, password, role) => {
   return user;
 };
 
+const findAllUsers = async ({ page, limit, role, search, sort }) => {
+  const filter = {};
+
+  if (role) {
+    filter.role = role;
+  }
+
+  if (search) {
+    filter.username = {
+      $regex: search,
+      $options: "i",
+    };
+  }
+
+  const options = {
+    page,
+    limit,
+  };
+
+  return userModel.paginate(filter, options);
+};
+
+const deleteUser = async (id) => {
+  return userModel.findByIdAndDelete(id);
+};
+
 module.exports = {
+  createToken,
+  verifyToken,
   findUsername,
   findUserById,
   isValidPassword,
   registerUser,
   setImage,
+  findAllUsers,
+  deleteUser,
 };

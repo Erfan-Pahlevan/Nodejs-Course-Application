@@ -1,26 +1,10 @@
-const jwt = require("jsonwebtoken");
-
 const userService = require("../../services/users.service");
 const postService = require("../../services/posts.service");
 
 const userModel = require("../../models/users.model");
 
-const checkAuthHeader = (req, res, next) => {
-  // Check if the specific header exists
-  if (!req.headers["userid"]) {
-    // 1. Set an appropriate HTTP Status (401 Unauthorized)
-    // 2. Send an actual response so the request closes
-    return res.status(401).json({
-      error: "Access Denied. Missing required authorization header.",
-    });
-  }
-
-  // If the header is there, move to the next handler!
-  next();
-};
-
 // Local middleware
-const auth = (req, res, next) => {
+const auth = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -38,10 +22,8 @@ const auth = (req, res, next) => {
   }
 
   try {
-    const payload = jwt.verify(token, process.env.JWTSECRET);
+    const payload = await userService.verifyToken(token, process.env.JWTSECRET);
     req.userId = payload.userId;
-
-    console.log("userId in auth:", req.userId);
 
     next();
   } catch (err) {
@@ -56,12 +38,7 @@ const isOwner = async (req, res, next) => {
   const { userId } = req;
   const { postId } = req.body;
 
-  console.log("userId:", userId);
-  console.log("postId:", postId);
-
   const findPost = await postService.findPost(postId);
-
-  console.log(findPost);
 
   if (!findPost) {
     return res.status(404).json({ message: "Post not found" });
