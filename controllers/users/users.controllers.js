@@ -153,7 +153,24 @@ async function getAll(req, res) {
         message: "Unauthorized: Access denied. No token provided",
       });
     }
-    const findUsers = await userModel.find();
+
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10 ;
+    const {role , search , sort}  = req.query
+    const filter = {}
+    if(role){
+      filter.role = role
+    }
+
+    if(search){
+      filter.username = {
+        $regex: search, 
+        $options: "i"
+      }
+    }
+
+    // const findUsers = await userModel.paginate(filter , {page , limit});
+    const findUsers = await userModel.find(filter).sort(sort);
     if (!findUsers) {
       return res.status(200).json({
         message: "No users in the database",

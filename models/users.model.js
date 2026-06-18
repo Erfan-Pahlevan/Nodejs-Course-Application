@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const paginate = require("mongoose-paginate-v2")
 const userSchema = new mongoose.Schema({
   name: { type: String, required: false },
   username: { type: String, required: true },
@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   role: { type: String, default: "user" },
 });
 
+userSchema.plugin(paginate)
 const userModel = mongoose.model("users", userSchema, "users");
 
 module.exports = userModel;
