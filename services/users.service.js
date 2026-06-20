@@ -21,7 +21,7 @@ const findUsername = async (username) => {
 };
 
 const findUserById = async (userId) => {
-  return userModel.findById(userId);
+  return userModel.findById(userId).populate("image");
 };
 
 const isValidPassword = async (password, findUser) => {
@@ -31,7 +31,7 @@ const isValidPassword = async (password, findUser) => {
 async function setImage(fileId, userId) {
   const findUser = await findUserById(userId);
   findUser.image = fileId;
-  findUser.save();
+  await findUser.save();
   return findUser;
 }
 

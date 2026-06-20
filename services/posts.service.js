@@ -1,7 +1,3 @@
-// const post = async (title, content) => {
-//   return postModel.create({ title, content });
-// };
-
 const postModel = require("../models/posts.model");
 
 const create = async (data, userId) => {

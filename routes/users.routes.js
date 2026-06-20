@@ -13,7 +13,6 @@ const {
   register,
   login,
   getAll,
-  getUserData,
   getUserById,
   getSearchResults,
   getProducts,
@@ -27,7 +26,7 @@ const {
 } = require("../controllers/users/users.controllers");
 
 router.get("/", (req, res) => {
-  res.send("<h1>users</h1>");
+  res.send("<h1>Hello World</h1>");
 });
 
 router.post("/register", validateRegister, register);
@@ -37,7 +36,6 @@ router.get("/get-all", getAll);
 router.get("/get-detail/:id", getDetail);
 router.put("/update", update);
 router.delete("/delete", deleteOne);
-router.get("/user", getUserData);
 
 // route params:
 router.get("/user/:id", getUserById);
@@ -45,8 +43,6 @@ router.get("/user/:id", getUserById);
 router.get("/dashboard", auth);
 router.get("/profile", auth, profile);
 router.get("/admin", auth);
-
-// Method using local middleware auth:
 
 router.get("/products/:id", getProductById);
 router.get("/products", getProducts);

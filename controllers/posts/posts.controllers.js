@@ -72,6 +72,12 @@ async function getAll(req, res) {
       sort,
     });
 
+    if (!findPosts) {
+      return res.status(200).json({
+        message: "No posts in the database",
+      });
+    }
+
     return res.status(200).json({
       findPosts,
       message: "Posts found successfully",

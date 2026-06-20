@@ -1,3 +1,5 @@
 node_modules/
 .env
 Express Vids/
+/uploads
+.gitignore

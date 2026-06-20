@@ -64,28 +64,11 @@ async function profile(req, res) {
 
   res.status(200).json({
     user: findUser,
+    image: findUser.image
+      ? { path: findUser.image.path, filename: findUser.image.fileName }
+      : null,
   });
 }
-
-const getUserData = (req, res) => {
-  try {
-    if (!req.headers.authorization) {
-      return res.status(401).json({
-        message: "Unauthorized: Access denied. No token provided",
-      });
-    }
-    res.status(200).json({
-      headers: req.headers,
-      name: "AmirAli",
-      age: 25,
-    });
-  } catch (err) {
-    return res.status(400).json({
-      message: "Bad request: could not fetch user data.",
-      error: err.message,
-    });
-  }
-};
 
 const getUserById = (req, res) => {
   try {
@@ -281,7 +264,6 @@ module.exports = {
   register,
   login,
   getAll,
-  getUserData,
   getUserById,
   getSearchResults,
   getProducts,

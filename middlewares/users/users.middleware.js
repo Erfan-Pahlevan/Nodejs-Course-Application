@@ -68,4 +68,4 @@ function role(roles) {
   };
 }
 
-module.exports = { checkAuthHeader, auth, isOwner, role };
+module.exports = { auth, isOwner, role };

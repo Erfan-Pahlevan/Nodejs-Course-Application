@@ -9,7 +9,11 @@ const userSchema = new mongoose.Schema({
   mobile: { type: String, required: false },
   password: { type: String, required: true, select: false }, // better to leave password select to false
   role: { type: String, default: "user" },
-  image: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "files" },
+  image: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false,
+    ref: "files",
+  },
 });
 
 userSchema.plugin(paginate);
