@@ -1,9 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const {
-  checkAuthHeader,
-  auth,
-} = require("./middlewares/users/users.middleware");
+const { auth } = require("./middlewares/users/users.middleware");
 const userRoutes = require("./routes/users.routes");
 const postRoutes = require("./routes/posts.routes");
 const loggerMiddleware = require("./middlewares/logger.middleware");
