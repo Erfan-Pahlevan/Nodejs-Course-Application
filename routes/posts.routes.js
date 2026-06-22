@@ -7,26 +7,35 @@ const {
   isOwner,
 } = require("../middlewares/users/users.middleware");
 
-const { validateCreatePost ,validateDeletePost } = require("../middlewares/posts/posts.validation.middleware");
+const {
+  validateCreatePost,
+  validateDeletePost,
+} = require("../middlewares/posts/posts.validation.middleware");
 
 const {
-  post,
-  getPostDetail,
-  getAll,
-  deleteOnePost,
+  createPost,
+  getPost,
+  getAllPosts,
+  deletePost,
 } = require("../controllers/posts/posts.controllers");
 
-router.post("/create", auth, validateCreatePost, post);
-router.get("/get-detail/:postId", getPostDetail); // should get id information from params and show details
-router.get("/get-list", getAll);
-router.delete("/delete-by-admin", auth, role(["admin"]),validateDeletePost, deleteOnePost);
+router.post("/create", auth, validateCreatePost, createPost);
+router.get("/get-detail/:postId", getPost);
+router.get("/get-list", getAllPosts);
 router.delete(
-  "/delete-my-post",
+  "/delete-by-admin/:postId",
+  auth,
+  role(["admin"]),
+  validateDeletePost,
+  deletePost,
+);
+router.delete(
+  "/delete-my-post/:postId",
   auth,
   validateDeletePost,
   isOwner,
   role(["admin", "user"]),
-  deleteOnePost,
+  deletePost,
 );
 
 module.exports = router;

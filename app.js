@@ -1,7 +1,5 @@
 require("dotenv").config();
 const express = require("express");
-const { auth } = require("./middlewares/users/users.middleware");
-const { auth } = require("./middlewares/users/users.middleware");
 const userRoutes = require("./routes/users.routes");
 const postRoutes = require("./routes/posts.routes");
 const loggerMiddleware = require("./middlewares/logger.middleware");
@@ -14,7 +12,7 @@ const rateLimit = require("express-rate-limit");
 async function connectDB() {
   try {
     (await mongoose.connect("mongodb://127.0.0.1:27017/shop"),
-      console.log("connected"));
+      console.log("MongoDB connected"));
   } catch (err) {
     console.error(err);
   }
