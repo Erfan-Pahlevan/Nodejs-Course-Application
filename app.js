@@ -7,7 +7,7 @@ const errorMiddleware = require("./middlewares/error.middleware");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
+const rateLimitMiddleware = require("./middlewares/rateLimit.middleware");
 
 async function connectDB() {
   try {
@@ -26,11 +26,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({ origin: "https://frontend.com" }));
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
-app.use(limiter);
+app.use(rateLimitMiddleware());
 app.use(helmet());
 app.use(loggerMiddleware);
 

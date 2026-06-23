@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../config/multer.config");
+const rateLimitMiddleware = require("../middlewares/rateLimit.middleware");
 
 const { auth } = require("../middlewares/users/users.middleware");
 
@@ -24,8 +25,8 @@ router.get("/", (req, res) => {
   res.send("<h1>Hello World</h1>");
 });
 
-router.post("/register", validateRegister, register);
-router.post("/login", validateLogin, login);
+router.post("/register",rateLimitMiddleware(15 * 60 * 1000, 20), validateRegister, register);
+router.post("/login",rateLimitMiddleware(15 * 60 * 1000, 20), validateLogin, login);
 
 router.get("/profile", auth, getProfile);
 router.post("/upload-avatar", auth, upload.single("avatar"), uploadAvatar);
